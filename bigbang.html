@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Du Big Bang au Diamant</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000408;color:#e8e8f0;font-family:'Cormorant Garamond',serif;overflow-x:hidden}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:70px 20px 120px}
+h1{text-align:center;font-size:clamp(1.8rem,4vw,3.2rem);font-weight:300;letter-spacing:.08em;color:#fff;text-shadow:0 0 60px rgba(168,216,255,.3);margin-bottom:10px}
+h1 em{font-style:italic;color:#8ab4c4}
+h1 strong{font-weight:600;color:#fff}
+.sub{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.22em;color:rgba(255,255,255,.2);text-transform:uppercase;margin-bottom:80px}
+
+.chapter{text-align:center;margin:60px 0 50px;position:relative;z-index:2}
+.chapter-inner{display:inline-block;padding:10px 28px;border:1px solid rgba(255,255,255,.08);border-radius:2px;background:rgba(0,4,8,0.5)}
+.chapter span{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;opacity:.4}
+.chapter h3{font-size:1rem;font-weight:300;letter-spacing:.12em;margin-top:4px;color:rgba(255,255,255,.7)}
+
+.tl{position:relative}
+.spine{position:absolute;left:50%;transform:translateX(-50%);width:1px;top:0;bottom:0;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.06) 2%,rgba(255,255,255,.06) 98%,transparent)}
+
+/* 4-column grid: visual-left | node | text | visual-right */
+.era{display:grid;grid-template-columns:1fr 56px 1fr;align-items:start;margin-bottom:52px;opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.era.in{opacity:1;transform:none}
+
+/* Left card: text left, visual right */
+.era.L .card  {grid-column:1;text-align:right;padding-right:28px}
+.era.L .nc    {grid-column:2}
+.era.L .vis   {grid-column:3;display:flex;align-items:center;justify-content:flex-start;padding-left:28px}
+
+/* Right card: visual left, node middle, text right */
+.era.R .vis   {grid-column:1;display:flex;align-items:center;justify-content:flex-end;padding-right:28px}
+.era.R .nc    {grid-column:2}
+.era.R .card  {grid-column:3;text-align:left;padding-left:28px}
+
+.nc{display:flex;flex-direction:column;align-items:center;padding-top:5px}
+.dot{width:13px;height:13px;border-radius:50%;border:1.5px solid currentColor;background:#000408;box-shadow:0 0 10px currentColor,0 0 22px currentColor;flex-shrink:0;position:relative}
+.dot.big{width:17px;height:17px;box-shadow:0 0 14px currentColor,0 0 36px currentColor}
+.dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid currentColor;opacity:.2;animation:pu 2.5s infinite}
+@keyframes pu{0%,100%{transform:scale(1);opacity:.2}50%{transform:scale(2.4);opacity:0}}
+.ln{width:1px;flex-grow:1;min-height:52px;background:linear-gradient(to bottom,currentColor,transparent);opacity:.1;margin-top:4px}
+
+.tl-t{font-family:'JetBrains Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;opacity:.38;margin-bottom:5px}
+.card h2{font-size:1.1rem;font-weight:600;margin-bottom:8px;line-height:1.25}
+.card p{font-size:.87rem;font-weight:300;line-height:1.82;color:rgba(232,232,240,.68);margin-bottom:5px}
+.card p strong{font-weight:600;color:inherit;filter:brightness(1.4)}
+.card p em{font-style:italic;opacity:.9}
+.facts{margin-top:8px;display:flex;flex-direction:column;gap:3px}
+.era.L .facts{align-items:flex-end}
+.fact{font-family:'JetBrains Mono',monospace;font-size:.57rem;color:rgba(255,255,255,.25)}
+.fact::before{content:'◆  ';font-size:.35rem;opacity:.45}
+.badge{display:inline-block;margin-top:8px;padding:2px 9px;border:1px solid currentColor;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:.57rem;opacity:.45;letter-spacing:.1em}
+
+.focus{margin:14px 0 0;padding:12px 14px;border-left:2px solid currentColor;background:rgba(255,255,255,.025);border-radius:0 3px 3px 0;text-align:left}
+.era.L .focus{border-left:none;border-right:2px solid currentColor;border-radius:3px 0 0 3px;text-align:right}
+.focus-title{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;opacity:.5;margin-bottom:6px}
+.focus p{font-size:.83rem;color:rgba(232,232,240,.6);margin-bottom:0}
+
+.reaction{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:10px;padding:7px 11px;background:rgba(255,255,255,.035);border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.63rem;color:rgba(255,255,255,.45);letter-spacing:.04em}
+.era.L .reaction{justify-content:flex-end}
+.arr{opacity:.28}
+
+footer{text-align:center;margin-top:80px;font-family:'JetBrains Mono',monospace;font-size:.57rem;color:rgba(255,255,255,.1);letter-spacing:.2em}
+
+@media(max-width:640px){
+  .era{grid-template-columns:20px 1fr;gap:0 12px}
+  .era.L .card,.era.R .card{grid-column:2;text-align:left;padding:0}
+  .era.L .nc,.era.R .nc{grid-column:1}
+  .em{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="wrap">
+  <h1>Du <em>Big Bang</em> au <strong>Diamant</strong></h1>
+  <p class="sub">13 800 000 000 ans · De la singularité à la pierre</p>
+  <div class="tl">
+  <div class="spine"></div>
+
+  <!-- ══════════════ CHAPITRE I ══════════════ -->
+  <div class="chapter">
+    <div class="chapter-inner">
+      <span>Chapitre I</span>
+      <h3>La Naissance de l'Univers</h3>
+    </div>
+  </div>
+
+  <!-- 1. BIG BANG -->
+  <div class="era L">
+    <div class="card" style="color:#c8a98a">
+      <div class="tl-t">t = 0</div>
+      <h2>Le Big Bang</h2>
+      <p>Singularité initiale. Toute l'énergie de l'univers concentrée en un point de densité infinie. L'espace-temps lui-même naît à cet instant. Les lois de la physique telles que nous les connaissons n'existent pas encore.</p>
+      <div class="facts">
+        <span class="fact">Densité et température infinies</span>
+        <span class="fact">Naissance de l'espace-temps</span>
+        <span class="fact">Volume initial → 0</span>
+      </div>
+      <span class="badge" style="color:#c8a98a">T → ∞</span>
+    </div>
+    <div class="nc" style="color:#c8a98a"><div class="dot big"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 2. PLANCK -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#b8956e"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#b8956e">
+      <div class="tl-t">t = 10⁻⁴³ s · Temps de Planck</div>
+      <h2>Ère de Planck</h2>
+      <p>La gravité se sépare des trois autres forces fondamentales. L'univers est une soupe d'énergie pure indescriptible par la physique classique.</p>
+      <div class="facts">
+        <span class="fact">Séparation de la gravité</span>
+        <span class="fact">4 forces peut-être unifiées</span>
+        <span class="fact">Longueur de Planck : 1,6 × 10⁻³⁵ m</span>
+      </div>
+      <span class="badge" style="color:#b8956e">T ~ 10³² K</span>
+    </div>
+  </div>
+
+  <!-- 3. INFLATION -->
+  <div class="era L">
+    <div class="card" style="color:#c4a882">
+      <div class="tl-t">t = 10⁻³⁶ à 10⁻³² s</div>
+      <h2>Inflation Cosmique</h2>
+      <p>Expansion exponentielle foudroyante, bien plus rapide que la lumière. L'univers passe de la taille d'un proton à celle d'un pamplemousse. Les fluctuations quantiques microscopiques sont étirées à l'échelle cosmique : ce sont les graines des futures galaxies.</p>
+      <div class="facts">
+        <span class="fact">Expansion × 10²⁶ en ~10⁻³² s</span>
+        <span class="fact">Lissage de la courbure spatiale</span>
+        <span class="fact">Fluctuations → graines des galaxies</span>
+      </div>
+      <span class="badge" style="color:#c4a882">T ~ 10²⁷ K</span>
+    </div>
+    <div class="nc" style="color:#c4a882"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 4. QUARKS -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#9eb89a"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#9eb89a">
+      <div class="tl-t">t = 10⁻¹² s · Transition électrofaible</div>
+      <h2>Naissance des Quarks & Leptons</h2>
+      <p>L'énergie pure se convertit en particules élémentaires. Matière et antimatière s'annihilent presque totalement. Un infime excès de matière survit : <strong>1 particule pour 1 milliard de paires</strong>. C'est ce reste qui constitue tout l'univers visible.</p>
+      <div class="facts">
+        <span class="fact">Asymétrie matière / antimatière</span>
+        <span class="fact">Quarks u, d, s, c, b, t</span>
+        <span class="fact">Électrons, neutrinos, photons</span>
+      </div>
+      <span class="badge" style="color:#9eb89a">T ~ 10¹⁵ K</span>
+    </div>
+  </div>
+
+  <!-- 5. HADRONS -->
+  <div class="era L">
+    <div class="card" style="color:#8ab4c4">
+      <div class="tl-t">t = 10⁻⁶ s</div>
+      <h2>Confinement des Hadrons</h2>
+      <p>Les quarks s'assemblent sous l'effet de la force nucléaire forte en protons (uud) et neutrons (udd). Le plasma quark-gluon disparaît définitivement.</p>
+      <div class="facts">
+        <span class="fact">Proton = 2 quarks up + 1 down</span>
+        <span class="fact">Neutron = 2 quarks down + 1 up</span>
+        <span class="fact">Plasma quark-gluon → hadrons</span>
+      </div>
+      <span class="badge" style="color:#8ab4c4">T ~ 10¹³ K</span>
+    </div>
+    <div class="nc" style="color:#8ab4c4"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 6. NUCLEOSYNTHESE -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#9c8db8"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#9c8db8">
+      <div class="tl-t">t = 1 à 3 minutes</div>
+      <h2>Nucléosynthèse Primordiale</h2>
+      <p>Fenêtre de seulement <strong>3 minutes</strong> pendant laquelle protons et neutrons fusionnent pour former les premiers noyaux. Après, l'univers est trop froid. <strong>Aucun carbone ne peut encore se former.</strong></p>
+      <div class="facts">
+        <span class="fact">75 % hydrogène ¹H</span>
+        <span class="fact">25 % hélium-4 ⁴He</span>
+        <span class="fact">Traces de deutérium, ³He, ⁷Li</span>
+        <span class="fact">Aucun carbone, oxygène, ni fer</span>
+      </div>
+      <span class="badge" style="color:#9c8db8">T ~ 10⁹ K</span>
+    </div>
+  </div>
+
+  <!-- 7. RECOMBINAISON -->
+  <div class="era L">
+    <div class="card" style="color:#a896c0">
+      <div class="tl-t">t = 380 000 ans · Recombinaison</div>
+      <h2>Premiers Atomes & Lumière Fossile</h2>
+      <p>Les électrons se lient aux noyaux. L'univers, jusqu'ici opaque, devient soudainement <em>transparent</em>. Le rayonnement libéré — le <em>Fond Diffus Cosmologique</em> (CMB) — est encore détectable aujourd'hui à 2,7 K.</p>
+      <div class="facts">
+        <span class="fact">Formation des atomes H et He neutres</span>
+        <span class="fact">Découplage matière / rayonnement</span>
+        <span class="fact">CMB émis à ~3 000 K → 2,7 K aujourd'hui</span>
+      </div>
+      <span class="badge" style="color:#a896c0">T ~ 3 000 K</span>
+    </div>
+    <div class="nc" style="color:#a896c0"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 8. AGES SOMBRES -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#7a9e7e"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#7a9e7e">
+      <div class="tl-t">380 000 ans → ~200 millions d'années</div>
+      <h2>Les Âges Sombres</h2>
+      <p>L'univers est froid, noir, silencieux. Aucune étoile ne brille. La matière noire s'effondre gravitationnellement en filaments et halos — le squelette de la future toile cosmique. Le gaz ordinaire s'y accumule lentement.</p>
+      <div class="facts">
+        <span class="fact">Aucune source lumineuse</span>
+        <span class="fact">Matière noire : ~27 % de l'univers</span>
+        <span class="fact">Formation des halos et filaments</span>
+        <span class="fact">Proto-nuages de H et He se densifient</span>
+      </div>
+      <span class="badge" style="color:#7a9e7e">T → quelques dizaines K</span>
+    </div>
+  </div>
+
+  <!-- ══════════════ CHAPITRE II ══════════════ -->
+  <div class="chapter">
+    <div class="chapter-inner">
+      <span>Chapitre II</span>
+      <h3>Les Premières Étoiles & la Naissance du Carbone</h3>
+    </div>
+  </div>
+
+  <!-- 9. POP III -->
+  <div class="era L">
+    <div class="card" style="color:#8aa8c8">
+      <div class="tl-t">t ~ 100–200 millions d'années · Aube Cosmique</div>
+      <h2>Population III — Les Premières Étoiles</h2>
+      <p>Les proto-nuages de gaz primordial s'effondrent sous leur propre gravité. La compression chauffe le cœur à 10 millions de degrés : la fusion nucléaire s'enclenche. Ces géantes de <strong>Population III</strong> (100–1000 M☉) brillent d'une intensité extrême, composées uniquement d'H et He.</p>
+      <div class="facts">
+        <span class="fact">Masse : 100–1000 M☉</span>
+        <span class="fact">Durée de vie : ~2–3 millions d'années</span>
+        <span class="fact">Luminosité : ~10⁶ × le Soleil</span>
+        <span class="fact">Réionisation de l'univers</span>
+      </div>
+      <span class="badge" style="color:#8aa8c8">Cœur : T ~ 10⁷ K</span>
+    </div>
+    <div class="nc" style="color:#8aa8c8"><div class="dot big"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 10. TRIPLE ALPHA -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#7ab0bc"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#7ab0bc">
+      <div class="tl-t">Dans le cœur des Pop. III · Processus Triple-Alpha</div>
+      <h2>Naissance du Carbone — Le Triple Alpha</h2>
+      <p>Une fois l'hydrogène épuisé, la fusion de l'hélium commence à ~100 millions de degrés. Deux noyaux d'hélium fusionnent en béryllium-8, instable (10⁻¹⁶ s). Un troisième noyau d'hélium doit le percuter avant qu'il se désintègre.</p>
+      <div class="focus" style="color:#7ab0bc;border-color:#7ab0bc">
+        <div class="focus-title">La Résonance de Hoyle</div>
+        <p>Hoyle prédit en 1953 que le ¹²C devait posséder un état excité à 7,65 MeV pour que le processus soit possible. Sans cette résonance, l'univers serait dépourvu de carbone — et de vie.</p>
+      </div>
+      <div class="reaction">
+        <span>α + α</span><span class="arr">→</span><span>⁸Be*</span><span class="arr">+ α →</span><span style="filter:brightness(1.6)">¹²C + γ</span>
+      </div>
+      <div class="facts">
+        <span class="fact">T cœur requise : ~10⁸ K</span>
+        <span class="fact">Résonance de Hoyle : 7,65 MeV</span>
+        <span class="fact">⁸Be instable : durée de vie 10⁻¹⁶ s</span>
+      </div>
+      <span class="badge" style="color:#7ab0bc">T ~ 10⁸ K</span>
+    </div>
+  </div>
+
+  <!-- 11. C → O -->
+  <div class="era L">
+    <div class="card" style="color:#6fa4b2">
+      <div class="tl-t">Toujours dans le cœur stellaire</div>
+      <h2>Le Carbone devient Oxygène, puis plus loin…</h2>
+      <p>Le carbone-12 peut capturer un quatrième noyau d'hélium pour devenir de l'oxygène-16. Dans les étoiles massives, la chaîne continue jusqu'au <strong>fer-56</strong>, terme ultime au-delà duquel la fusion ne produit plus d'énergie.</p>
+      <div class="reaction">
+        <span>¹²C + ⁴He</span><span class="arr">→</span><span style="filter:brightness(1.6)">¹⁶O + γ</span>
+      </div>
+      <div class="facts">
+        <span class="fact">¹²C + ⁴He → ¹⁶O + γ</span>
+        <span class="fact">Fusion C → Ne → Mg → Si → Fe</span>
+        <span class="fact">Fer-56 : fin de la chaîne</span>
+        <span class="fact">Structure en couches concentriques</span>
+      </div>
+      <span class="badge" style="color:#6fa4b2">T ~ 10⁹ K</span>
+    </div>
+    <div class="nc" style="color:#6fa4b2"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 12. SUPERNOVA -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#b89070"><div class="dot big"></div><div class="ln"></div></div>
+    <div class="card" style="color:#b89070">
+      <div class="tl-t">Fin de vie des Pop. III · Supernovæ</div>
+      <h2>Explosion en Supernovæ — Dispersion du Carbone</h2>
+      <p>Le cœur de fer s'effondre en une fraction de seconde. Le rebond génère une onde de choc colossale. En quelques secondes, l'étoile libère plus d'énergie que le Soleil en toute sa vie. Les couches riches en <strong>carbone, oxygène et éléments lourds</strong> sont projetées dans le milieu interstellaire.</p>
+      <div class="facts">
+        <span class="fact">Effondrement du cœur en ~0,1 s</span>
+        <span class="fact">Énergie : ~10⁴⁴ joules</span>
+        <span class="fact">C, O, Fe dispersés à des milliers de km/s</span>
+        <span class="fact">Première dispersion de carbone dans l'univers</span>
+      </div>
+      <span class="badge" style="color:#b89070">T ~ 10¹¹ K</span>
+    </div>
+  </div>
+
+  <!-- ══════════════ CHAPITRE III ══════════════ -->
+  <div class="chapter">
+    <div class="chapter-inner">
+      <span>Chapitre III</span>
+      <h3>Galaxies, Soleil & Terre</h3>
+    </div>
+  </div>
+
+  <!-- 13. GALAXIES -->
+  <div class="era L">
+    <div class="card" style="color:#c4ad80">
+      <div class="tl-t">t ~ 500 millions – 1 milliard d'années</div>
+      <h2>Formation des Premières Galaxies</h2>
+      <p>Les nuages de gaz enrichis en carbone et oxygène par les supernovæ de Pop. III s'effondrent en structures compactes. Les premières galaxies se forment, abritant des étoiles de <strong>Population II</strong> — moins massives, plus longévives, déjà enrichies en métaux.</p>
+      <div class="facts">
+        <span class="fact">Premières galaxies naines</span>
+        <span class="fact">Étoiles de Population II</span>
+        <span class="fact">Gaz enrichi par les supernovæ Pop. III</span>
+      </div>
+      <span class="badge" style="color:#c4ad80">~500 M ans</span>
+    </div>
+    <div class="nc" style="color:#c4ad80"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 14. VOIE LACTEE -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#bda872"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#bda872">
+      <div class="tl-t">t ~ 1 – 8 milliards d'années</div>
+      <h2>La Voie Lactée & les Générations d'Étoiles</h2>
+      <p>La Voie Lactée se constitue progressivement. Chaque génération d'étoiles enrichit le milieu interstellaire en éléments lourds. Le carbone s'accumule, recyclé de supernova en supernova, attendant de prendre la forme de nouvelles étoiles, planètes — et diamants.</p>
+      <div class="facts">
+        <span class="fact">Voie Lactée : ~13,6 milliards d'années</span>
+        <span class="fact">~400 milliards d'étoiles</span>
+        <span class="fact">Cycle : étoiles → supernovæ → nouvelles étoiles</span>
+      </div>
+      <span class="badge" style="color:#bda872">1–8 Ga</span>
+    </div>
+  </div>
+
+  <!-- 15. SOLEIL -->
+  <div class="era L">
+    <div class="card" style="color:#c8b87a">
+      <div class="tl-t">il y a 4,6 milliards d'années</div>
+      <h2>Naissance du Soleil & du Système Solaire</h2>
+      <p>Un nuage moléculaire s'effondre. Le cœur forme le <strong>Soleil</strong> (Population I), riche en carbone, oxygène et silicium hérités de milliards d'années de supernovæ. Dans son cœur à 15 millions de degrés, le carbone joue un rôle catalytique dans le <strong>cycle CNO</strong> : sans être consommé, il aide à fusionner 4 protons en hélium-4.</p>
+      <div class="reaction">
+        <span>¹²C + 4¹H</span><span class="arr">→[CNO]→</span><span style="filter:brightness(1.5)">¹²C + ⁴He + γ</span>
+      </div>
+      <div class="facts">
+        <span class="fact">Cœur solaire : T ~ 15 × 10⁶ K</span>
+        <span class="fact">Carbone : ~0,3 % de la masse solaire</span>
+        <span class="fact">Cycle CNO : C catalyseur de H → He</span>
+      </div>
+      <span class="badge" style="color:#c8b87a">il y a 4,6 Ga</span>
+    </div>
+    <div class="nc" style="color:#c8b87a"><div class="dot big"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 16. TERRE -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#8a9e7a"><div class="dot"></div><div class="ln"></div></div>
+    <div class="card" style="color:#8a9e7a">
+      <div class="tl-t">il y a 4,5 milliards d'années</div>
+      <h2>Formation de la Terre</h2>
+      <p>Dans le disque protoplanétaire, des poussières et rochers s'agrègent par accrétion. La Terre se forme en quelques dizaines de millions d'années à partir de matériaux riches en silicates, fer et <strong>carbone</strong>. Les météorites lui apportent également du carbone extraterrestre.</p>
+      <div class="facts">
+        <span class="fact">Accrétion de planétésimaux : ~30–50 Ma</span>
+        <span class="fact">Surface primitive en fusion</span>
+        <span class="fact">Carbone abondant dans la croûte</span>
+        <span class="fact">Apports de carbone par les météorites</span>
+      </div>
+      <span class="badge" style="color:#8a9e7a">il y a 4,5 Ga</span>
+    </div>
+  </div>
+
+  <!-- ══════════════ CHAPITRE IV ══════════════ -->
+  <div class="chapter">
+    <div class="chapter-inner">
+      <span>Chapitre IV</span>
+      <h3>Le Voyage du Carbone jusqu'au Diamant</h3>
+    </div>
+  </div>
+
+  <!-- 17. CARBONE DANS LE MANTEAU -->
+  <div class="era L">
+    <div class="card" style="color:#9488b8">
+      <div class="tl-t">il y a 4,5 à 3,5 milliards d'années</div>
+      <h2>Le Carbone s'enfonce dans le Manteau</h2>
+      <p>La Terre se différencie : le fer lourd descend vers le noyau, les silicates forment le manteau. Le carbone se retrouve piégé dans le <strong>manteau lithosphérique cratonique</strong> à 150–250 km de profondeur, soumis à des températures de 900–1 300 °C et des pressions de 45–60 kilobars.</p>
+      <div class="facts">
+        <span class="fact">Différenciation planétaire : fer → noyau</span>
+        <span class="fact">Profondeur : 150–250 km</span>
+        <span class="fact">T : 900–1 300 °C</span>
+        <span class="fact">Pression : 45–60 kilobars</span>
+      </div>
+      <span class="badge" style="color:#9488b8">150–250 km de profondeur</span>
+    </div>
+    <div class="nc" style="color:#9488b8"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- 18. FORMATION DIAMANT -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#a48cb0"><div class="dot big"></div><div class="ln"></div></div>
+    <div class="card" style="color:#a48cb0">
+      <div class="tl-t">il y a 3,5 Ga à quelques centaines de millions d'années</div>
+      <h2>Formation du Diamant</h2>
+      <p>Sous l'effet combiné de la pression et de la chaleur, les atomes de carbone se réarrangent dans une structure cristalline tétraédrique parfaite : chaque atome lié à <strong>quatre voisins</strong> par des liaisons covalentes. C'est le réseau le plus dense et le plus dur du carbone.</p>
+      <div class="focus" style="color:#a48cb0;border-color:#a48cb0">
+        <div class="focus-title">Pourquoi le diamant et pas le graphite ?</div>
+        <p>La pression extrême du manteau force chaque atome dans une configuration tétraédrique 3D rigide et continue — dureté maximale (10/10 sur Mohs). À basse pression, le graphite est la forme stable.</p>
+      </div>
+      <div class="facts">
+        <span class="fact">Réseau cubique à faces centrées</span>
+        <span class="fact">Chaque C lié à 4 voisins (sp³)</span>
+        <span class="fact">Dureté : 10 / 10 (Mohs)</span>
+        <span class="fact">Formation lente : sur des millions d'années</span>
+      </div>
+      <span class="badge" style="color:#a48cb0">P : 45–60 kbar · T : 900–1 300 °C</span>
+    </div>
+  </div>
+
+  <!-- 19. KIMBERLITE -->
+  <div class="era L">
+    <div class="card" style="color:#b08898">
+      <div class="tl-t">il y a quelques centaines de millions d'années</div>
+      <h2>La Remontée — Les Pipes Kimberlitiques</h2>
+      <p>Des intrusions magmatiques d'origine profonde — les <strong>kimberlites</strong> — remontent vers la surface à 10–30 km/h. Cette vitesse doit être suffisamment rapide pour que les diamants n'aient pas le temps de se transformer en graphite. Les pipes kimberlitiques arrachent des fragments du manteau et les emportent en surface.</p>
+      <div class="facts">
+        <span class="fact">Remontée : 10–30 km/h</span>
+        <span class="fact">Origine : 150–250 km de profondeur</span>
+        <span class="fact">Pipes : structures coniques en surface</span>
+        <span class="fact">Pays : Afrique du Sud, Russie, Canada, Botswana</span>
+      </div>
+      <span class="badge" style="color:#b08898">~10–30 km/h</span>
+    </div>
+    <div class="nc" style="color:#b08898"><div class="dot"></div><div class="ln"></div></div>
+    <div class="em"></div>
+</div>
+
+  <!-- ══════════════ CHAPITRE V ══════════════ -->
+  <div class="chapter">
+    <div class="chapter-inner">
+      <span>Chapitre V</span>
+      <h3>Aujourd'hui</h3>
+    </div>
+  </div>
+
+  <!-- 20. DIAMANT -->
+  <div class="era R">
+    <div class="em"></div>
+<div class="nc" style="color:#a8c4cc"><div class="dot big"></div></div>
+    <div class="card" style="color:#a8c4cc">
+      <div class="tl-t">De nos jours · t = 13,8 milliards d'années</div>
+      <h2>Le Diamant — Mémoire de l'Univers</h2>
+      <p>Chaque diamant est un message direct du manteau terrestre, formé de carbone forgé dans des étoiles mortes il y a plus de <strong>5 à 10 milliards d'années</strong>. Entre la singularité du Big Bang et la pierre, l'univers entier a travaillé.</p>
+      <div class="focus" style="color:#a8c4cc;border-color:#a8c4cc">
+        <div class="focus-title">Le trajet complet d'un atome de carbone</div>
+        <p>Forgé dans une étoile géante (~10 Ga) → dispersé par une supernova → incorporé dans le nuage protosolaire → intégré à la Terre → enfoui dans le manteau à 150 km → cristallisé en diamant → remonté en quelques heures par une kimberlite → extrait, taillé, porté.</p>
+      </div>
+      <div class="facts">
+        <span class="fact">Âge moyen des diamants : 1 à 3,5 milliards d'années</span>
+        <span class="fact">Carbone stellaire : ~10 milliards d'années d'histoire</span>
+        <span class="fact">~130 millions de carats extraits / an</span>
+      </div>
+      <span class="badge" style="color:#a8c4cc">t = 13,8 milliards d'années</span>
+    </div>
+  </div>
+
+  </div><!-- fin .tl -->
+  <footer>Big Bang → Diamant · 13 800 000 000 ans · De la singularité à la pierre</footer>
+</div>
+
+<script>
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+let st=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight}
+function is(){
+  st=[];
+  for(let i=0;i<480;i++){
+    const tier=Math.random();
+    st.push({
+      x:Math.random()*cv.width,
+      y:Math.random()*cv.height,
+      r: tier>0.96?1.0+Math.random()*0.6:tier>0.80?0.45+Math.random()*0.4:0.15+Math.random()*0.25,
+      a:Math.random()*Math.PI*2,
+      s:0.004+Math.random()*0.008,
+      max:tier>0.96?0.75+Math.random()*0.2:tier>0.80?0.45+Math.random()*0.25:0.20+Math.random()*0.20,
+      col:tier>0.93?'225,235,255':tier>0.75?'190,210,255':'160,190,255'
+    });
+  }
+}
+function dr(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  const bg=cx.createRadialGradient(cv.width*0.35,cv.height*0.15,0,cv.width*0.5,cv.height*0.5,cv.width*0.95);
+  bg.addColorStop(0,'#030a1c');
+  bg.addColorStop(0.6,'#010610');
+  bg.addColorStop(1,'#000408');
+  cx.fillStyle=bg;cx.fillRect(0,0,cv.width,cv.height);
+  st.forEach(s=>{
+    s.a+=s.s;
+    const alpha=s.max*Math.sin(s.a)*Math.sin(s.a);
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(${s.col},${alpha})`;cx.fill();
+  });
+  requestAnimationFrame(dr);
+}
+rs();is();dr();
+addEventListener('resize',()=>{rs();is()});
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in')}),{threshold:.06});
+document.querySelectorAll('.era').forEach(e=>obs.observe(e));
+</script>
+</body>
+</html>

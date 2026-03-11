@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adamas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000408;color:#e8e8f0;font-family:'Cormorant Garamond',serif;overflow-x:hidden;min-height:100vh}
+canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:100px 24px 120px}
+
+header{text-align:center;margin-bottom:100px}
+.site-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:24px}
+header h1{font-size:clamp(3rem,8vw,6rem);font-weight:300;letter-spacing:.15em;color:#fff;text-shadow:0 0 80px rgba(168,216,255,.2);line-height:1}
+header h1 em{font-style:italic;color:#8ab4c4;font-weight:300}
+.tagline{margin-top:20px;font-size:1rem;font-weight:300;letter-spacing:.12em;color:rgba(255,255,255,.3);font-style:italic}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;margin-top:60px}
+
+.card{
+  position:relative;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:3px;
+  padding:32px 28px;
+  background:rgba(255,255,255,.02);
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  transition:border-color .4s, background .4s, transform .4s;
+  cursor:pointer;
+}
+.card:hover{
+  border-color:rgba(255,255,255,.18);
+  background:rgba(255,255,255,.04);
+  transform:translateY(-3px);
+}
+.card-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;opacity:.35;margin-bottom:14px}
+.card h2{font-size:1.4rem;font-weight:400;letter-spacing:.05em;margin-bottom:10px;line-height:1.25}
+.card p{font-size:.85rem;font-weight:300;line-height:1.75;color:rgba(232,232,240,.5)}
+.card-arrow{position:absolute;bottom:24px;right:24px;font-family:'JetBrains Mono',monospace;font-size:.7rem;opacity:.25;transition:opacity .3s}
+.card:hover .card-arrow{opacity:.6}
+
+/* Placeholder cards */
+.card.soon{opacity:.35;cursor:default;pointer-events:none}
+.card.soon:hover{transform:none;border-color:rgba(255,255,255,.07)}
+
+.card.c1{color:#c8a98a;border-color:rgba(200,169,138,.12)}
+.card.c1:hover{border-color:rgba(200,169,138,.3)}
+.card.c2{color:#8aa8c8;border-color:rgba(138,168,200,.08)}
+.card.c3{color:#a48cb0;border-color:rgba(164,140,176,.08)}
+.card.c4{color:#7a9e7e;border-color:rgba(122,158,126,.08)}
+
+footer{text-align:center;margin-top:100px;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.08);letter-spacing:.2em}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="site-label">Collection de timelines</div>
+    <h1><em>Adamas</em></h1>
+    <p class="tagline">De la singularité à la pierre</p>
+  </header>
+
+  <div class="grid">
+
+    <a href="bigbang.html" class="card c1">
+      <div class="card-label">Timeline · Chapitre I → V</div>
+      <h2>Du Big Bang au Diamant</h2>
+      <p>13,8 milliards d'années — de la singularité initiale à la cristallisation du carbone dans le manteau terrestre.</p>
+      <span class="card-arrow">→</span>
+    </a>
+
+    <div class="card c2 soon">
+      <div class="card-label">Prochainement</div>
+      <h2>Les Diamants du Monde</h2>
+      <p>Botswana, Namibie, Afrique du Sud, Canada, Sierra Leone — cinq origines, cinq histoires.</p>
+      <span class="card-arrow">→</span>
+    </div>
+
+    <div class="card c3 soon">
+      <div class="card-label">Prochainement</div>
+      <h2>La Métaphysique du Bijou</h2>
+      <p>De la parure primitive au diamant contemporain — le bijou comme langage du corps et de l'âme.</p>
+      <span class="card-arrow">→</span>
+    </div>
+
+    <div class="card c4 soon">
+      <div class="card-label">Prochainement</div>
+      <h2>L'Art de la Taille</h2>
+      <p>Du cristal brut à la taille brillant — comment la lumière est capturée, décomposée, renvoyée.</p>
+      <span class="card-arrow">→</span>
+    </div>
+
+  </div>
+</div>
+
+<footer>Adamas · voyagedanslecristal</footer>
+
+<script>
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+let st=[];
+function rs(){cv.width=innerWidth;cv.height=innerHeight}
+function is(){
+  st=[];
+  for(let i=0;i<480;i++){
+    const tier=Math.random();
+    st.push({
+      x:Math.random()*cv.width,y:Math.random()*cv.height,
+      r:tier>0.96?1.0+Math.random()*0.6:tier>0.80?0.45+Math.random()*0.4:0.15+Math.random()*0.25,
+      a:Math.random()*Math.PI*2,
+      s:0.004+Math.random()*0.008,
+      max:tier>0.96?0.75+Math.random()*0.2:tier>0.80?0.45+Math.random()*0.25:0.20+Math.random()*0.20,
+      col:tier>0.93?'225,235,255':tier>0.75?'190,210,255':'160,190,255'
+    });
+  }
+}
+function dr(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  const bg=cx.createRadialGradient(cv.width*0.35,cv.height*0.15,0,cv.width*0.5,cv.height*0.5,cv.width*0.95);
+  bg.addColorStop(0,'#030a1c');bg.addColorStop(0.6,'#010610');bg.addColorStop(1,'#000408');
+  cx.fillStyle=bg;cx.fillRect(0,0,cv.width,cv.height);
+  st.forEach(s=>{
+    s.a+=s.s;
+    const alpha=s.max*Math.sin(s.a)*Math.sin(s.a);
+    cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(${s.col},${alpha})`;cx.fill();
+  });
+  requestAnimationFrame(dr);
+}
+rs();is();dr();
+addEventListener('resize',()=>{rs();is()});
+</script>
+</body>
+</html>
