@@ -206,7 +206,6 @@
 
   /* ── HERO ── */
   .hero {
-    overflow: hidden;
     position: relative;
     height: 100vh;
     display: flex;
@@ -1280,10 +1279,18 @@
 
   body, html { background-color: #080808 !important; }
 
-  /* FIX: prevent hero overflow gap */
-  .hero { overflow: hidden !important; }
-  /* FIX: remove gap between hero and intro */
-  .hero + div { display: none !important; }
+  /* FIX: seamless hero→intro transition */
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 280px;
+    background: linear-gradient(to bottom, transparent 0%, #080808 100%);
+    z-index: 5;
+    pointer-events: none;
+  }
+  /* FIX: hero content better distributed */
+  .hero { min-height: 85vh !important; }
 </style>
 </head>
 <body>
