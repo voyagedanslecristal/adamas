@@ -1291,6 +1291,10 @@
   }
   /* FIX: hero content better distributed */
   .hero { min-height: 85vh !important; }
+
+  /* FIX hero height - contenu ne remplit que 78% */
+  .hero { min-height: 78vh !important; height: 78vh !important; }
+  .hero::after { height: 160px !important; }
 </style>
 </head>
 <body>
