@@ -15,7 +15,7 @@
     --gold: #d4500a;
     --gold-light: #e8732e;
     --gold-pale: #f5a060;
-    --ivory: #f5ede6;
+    --ivory: #f5ede6
     --muted: #6a5a52;
     --line: rgba(212,80,10,0.22);
   }
@@ -647,6 +647,11 @@
     cursor: grab;
   }
   .htl-scroll:active { cursor: grabbing; }
+    /* NAV ENHANCED */
+      nav { transition: background 0.5s ease, border-color 0.5s ease, backdrop-filter 0.5s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1) !important; backdrop-filter: blur(0px) !important; -webkit-backdrop-filter: blur(0px) !important; }
+        nav.nav--scrolled { background: rgba(8,8,8,0.75) !important; border-bottom: 1px solid rgba(212,80,10,0.22) !important; backdrop-filter: blur(22px) saturate(160%) !important; -webkit-backdrop-filter: blur(22px) saturate(160%) !important; }
+          nav.nav--hidden { transform: translateY(-100%) !important; }
+            .nav-links a { position: relative; padding-bottom: 3px; } .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 1px; background: var(--gold, #d4500a); transition: width 0.4s cubic-bezier(0.22,1,0.36,1); } .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
   .htl-scroll::-webkit-scrollbar { display: none; }
 
   /* Inner track */
@@ -656,12 +661,12 @@
     gap: 0;
     min-width: max-content;
     position: relative;
-    padding: 3rem 0;
+    padding: 3rem 0
   }
 
   /* Horizontal rule across all nodes */
   .htl-track::before {
-    content: '';
+    content: ''
     position: absolute;
     top: calc(3rem + 170px + 28px); /* cards top-pad + card height + node offset */
     left: 0; right: 0;
@@ -696,7 +701,7 @@
     background: rgba(212,80,10,0.04);
     margin-bottom: 1.8rem;
     flex-shrink: 0;
-    transition: border-color 0.5s, box-shadow 0.5s, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    transition: border-color 0.5s, box-shadow 0.5s, transform 0.85s cubic-bezier(0.22,1,0.36,1);
     overflow: hidden;
     position: relative;
   }
@@ -727,7 +732,8 @@
   .htl-card { cursor: default; }
 
   .htl-card:hover .htl-img {
-    transform: scale(1.18);
+    transform: scale(1.28)
+;
     border-color: var(--gold) !important;
     box-shadow: 0 0 50px rgba(212,80,10,0.45), 0 0 0 1px rgba(212,80,10,0.25) !important;
     z-index: 20;
@@ -2169,6 +2175,23 @@
       });
     }
   })();
+  // NAV SCROLL BEHAVIOUR
+    (function() {
+        var nav = document.querySelector('nav');
+            if (!nav) return;
+                var lastY = 0, ticking = false;
+                    window.addEventListener('scroll', function() {
+                          if (!ticking) {
+                                  requestAnimationFrame(function() {
+                                            var y = window.scrollY;
+                                                      if (y > 60) { nav.classList.add('nav--scrolled'); } else { nav.classList.remove('nav--scrolled'); }
+                                                                if (y > lastY && y > 120) { nav.classList.add('nav--hidden'); } else { nav.classList.remove('nav--hidden'); }
+                                                                          lastY = y; ticking = false;
+                                                                                  });
+                                                                                          ticking = true;
+                                                                                                }
+                                                                                                    }, { passive: true });
+                                                                                                      })();
 
 </script>
 
