@@ -327,12 +327,13 @@
     letter-spacing: 0.18em;
     line-height: 0.9;
     color: transparent;
-    background: linear-gradient(135deg, #d4500a 0%, #f5a060 35%, #ff6b20 55%, #a33000 100%);
+    background: linear-gradient(110deg, #a33000 0%, #d4500a 20%, #f5a060 40%, #ffe8c0 50%, #f5a060 60%, #d4500a 80%, #a33000 100%);
+    background-size: 300% auto;
     -webkit-background-clip: text;
     background-clip: text;
     filter: drop-shadow(0 0 40px rgba(212,80,10,0.5));
     opacity: 0;
-    animation: fadeUp 1.4s 0.8s ease forwards;
+    animation: fadeUp 1.4s 0.8s ease forwards, journeyShimmer 6s 2.5s ease-in-out infinite;
   }
   .hero-subtitle {
     font-family: 'Nanum Myeongjo', Georgia, serif;
@@ -411,6 +412,10 @@
     100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
   }
 
+  @keyframes journeyShimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
@@ -433,9 +438,11 @@
 
   .section-label {
     font-family: 'Albert Sans', sans-serif;
-    font-size: 0.58rem;
-    letter-spacing: 0.2em;
-    color: var(--gold);
+    font-size: 0.62rem;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--ember);
+    font-weight: 400;
     margin-bottom: 1.5rem;
   }
 
@@ -959,11 +966,21 @@
   .artistry-text h2 {
     font-family: 'Albert Sans', sans-serif;
     font-size: clamp(2.4rem, 4.5vw, 4rem);
-    font-weight: 400;
-    letter-spacing: 0.05em;
+    font-weight: 300;
+    letter-spacing: 0.12em;
     color: var(--ivory);
-    margin: 1rem 0 2rem;
+    margin: 1rem 0 2.5rem;
     line-height: 1.1;
+    position: relative;
+    padding-bottom: 0.8rem;
+    display: inline-block;
+  }
+  .artistry-text h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 56px; height: 1px;
+    background: linear-gradient(to right, var(--ember), transparent);
   }
   .artistry-text p {
     font-size: 1.2rem;
@@ -1026,9 +1043,14 @@
   }
   .artistry-visual-bg {
     position: absolute; inset: 0;
-    background: 
-      linear-gradient(135deg, rgba(201,169,110,0.03) 0%, transparent 50%),
-      radial-gradient(ellipse at 30% 50%, rgba(201,169,110,0.06) 0%, transparent 60%);
+    overflow: hidden;
+  }
+  .artistry-bg-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    filter: saturate(0.5) brightness(0.65);
   }
   .artistry-grid {
     position: absolute; inset: 0;
@@ -1336,12 +1358,13 @@
      HERO EYEBROW - "Connect With Your Diamond's"
   ═══════════════════════════════════════════════ */
   .hero-eyebrow {
-    font-family: 'Nanum Myeongjo', Georgia, serif !important;
-    font-size: clamp(0.85rem, 1.2vw, 1.1rem) !important;
-    font-style: italic !important;
-    letter-spacing: 0.25em !important;
-    color: rgba(245,237,230,0.68) !important;
-    font-weight: 400 !important;
+    font-family: 'Albert Sans', sans-serif !important;
+    font-size: clamp(0.6rem, 0.85vw, 0.78rem) !important;
+    font-style: normal !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.45em !important;
+    text-transform: uppercase !important;
+    color: rgba(245,237,230,0.6) !important;
     position: relative !important;
     padding-bottom: 1rem !important;
     margin-bottom: 0.8rem !important;
@@ -1855,7 +1878,11 @@
   </div>
 
   <div class="artistry-visual">
-    <div class="artistry-visual-bg"></div>
+    <div class="artistry-visual-bg">
+      <video class="artistry-bg-video" autoplay muted loop playsinline>
+        <source src="https://origin.debeersgroup.com/wp-content/uploads/2025/09/India-45-sec-1.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="artistry-grid">
       <div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div>
       <div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div>
