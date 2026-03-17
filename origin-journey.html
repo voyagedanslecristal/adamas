@@ -310,7 +310,16 @@
     align-items: center;
     padding-top: clamp(140px, 18vw, 220px);
   }
-  
+  .hero-eyebrow {
+    font-family: 'Albert Sans', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: rgba(245,237,230,0.92);
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 1.4s 0.5s ease forwards;
+  }
   .hero-title {
     font-family: 'Albert Sans', sans-serif;
     font-size: clamp(3.5rem, 10vw, 8rem);
@@ -1352,7 +1361,18 @@
   /* ═══════════════════════════════════════════════
      HERO EYEBROW - "Connect With Your Diamond's"
   ═══════════════════════════════════════════════ */
-  
+  .hero-eyebrow {
+    font-family: 'Albert Sans', sans-serif !important;
+    font-size: clamp(0.6rem, 0.85vw, 0.78rem) !important;
+    font-style: normal !important;
+    font-weight: 300 !important;
+    letter-spacing: 0.45em !important;
+    text-transform: uppercase !important;
+    color: rgba(245,237,230,0.6) !important;
+    position: relative !important;
+    padding-bottom: 1rem !important;
+    margin-bottom: 0.8rem !important;
+  }
   .hero-eyebrow::after {
     content: '';
     position: absolute;
@@ -1524,18 +1544,6 @@
   
     .intro-lead, .intro-sublead { font-family: 'Nanum Myeongjo', Georgia, serif !important; font-style: italic !important; font-size: clamp(1.3rem, 2vw, 1.75rem) !important; color: rgba(245, 237, 230, 0.68) !important; line-height: 1.7 !important; }
     .intro-sublead { margin-top: 0.2rem !important; }
-  
-    .hero-eyebrow {
-      font-family: 'Albert Sans', sans-serif;
-      font-size: clamp(1.1rem, 2vw, 1.6rem);
-      font-weight: 700;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
-      color: rgba(245,237,230,0.92);
-      margin-bottom: 1.2rem;
-      opacity: 0;
-      animation: fadeUp 1.4s 0.5s ease forwards;
-    }
   </style>
 </head>
 <body>
