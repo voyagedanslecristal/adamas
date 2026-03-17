@@ -1045,7 +1045,7 @@
     min-height: 600px;
     overflow: hidden;
   }
-  .artistry-visual-bg { z-index: 0;
+  .artistry-visual-bg {
     position: absolute; inset: 0;
     overflow: hidden;
   }
@@ -1459,10 +1459,25 @@
     transform-origin: center center;
   }
 
+    /* Video covers full artistry section */
     .artistry { position: relative; overflow: hidden; }
-    .artistry > .artistry-visual-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
-    .artistry > .artistry-visual-bg .artistry-bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-    .artistry-content, .artistry-visual { position: relative; z-index: 1; }
+    .artistry-visual { position: static; overflow: visible; }
+    .artistry-visual-bg {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      z-index: 0;
+    }
+    .artistry-visual-bg .artistry-bg-video {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+    }
+    .artistry-content { position: relative; z-index: 1; }
+    .artistry-grid, .dc-carousel-container, .artistry-inner { position: relative; z-index: 1; }
+  
   </style>
 </head>
 <body>
@@ -1875,11 +1890,6 @@
 
 <!-- ══ ARTISTRY ══ -->
 <section class="artistry" data-section="4">
-    <div class="artistry-visual-bg">
-      <video class="artistry-bg-video" autoplay muted loop playsinline>
-        <source src="https://origin.debeersgroup.com/wp-content/uploads/2025/09/India-45-sec-1.mp4" type="video/mp4">
-      </video>
-    </div>
   <div class="artistry-text">
     <p class="section-label reveal">THE HUMAN HAND</p>
     <h2 class="reveal">ARTISTRY</h2>
@@ -1892,7 +1902,11 @@
   </div>
 
   <div class="artistry-visual">
-    
+    <div class="artistry-visual-bg">
+      <video class="artistry-bg-video" autoplay muted loop playsinline>
+        <source src="https://origin.debeersgroup.com/wp-content/uploads/2025/09/India-45-sec-1.mp4" type="video/mp4">
+      </video>
+    </div>
     <div class="artistry-grid">
       <div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div>
       <div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div><div class="artistry-grid-cell"></div>
