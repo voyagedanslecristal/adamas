@@ -416,6 +416,10 @@
     0%, 100% { background-position: 0% center; }
     50% { background-position: 100% center; }
   }
+  @keyframes journeyShimmer {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1945,6 +1949,16 @@
       <line x1="40" y1="130" x2="130" y2="105" stroke="rgba(201,169,110,0.3)" stroke-width="0.5"/>
       <line x1="105" y1="50" x2="200" y2="80" stroke="rgba(201,169,110,0.3)" stroke-width="0.5"/>
     </svg>
+  <div id="diamond-carousel" style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;">
+    <div style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+      <div class="dc-slide" data-i="0" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:1;transition:opacity 1.2s ease;"><img src="https://raw.githubusercontent.com/voyagedanslecristal/adamas/main/diamonds/round.png" style="max-height:60%;max-width:65%;object-fit:contain;filter:drop-shadow(0 0 20px rgba(212,80,10,0.2));"/><p style="margin-top:1.2rem;font-family:'Albert Sans',sans-serif;font-size:0.55rem;letter-spacing:0.42em;text-transform:uppercase;color:rgba(245,237,230,0.45);">Round</p></div>
+      <div class="dc-slide" data-i="1" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease;"><img src="https://raw.githubusercontent.com/voyagedanslecristal/adamas/main/diamonds/cushion.png" style="max-height:60%;max-width:65%;object-fit:contain;filter:drop-shadow(0 0 20px rgba(212,80,10,0.2));"/><p style="margin-top:1.2rem;font-family:'Albert Sans',sans-serif;font-size:0.55rem;letter-spacing:0.42em;text-transform:uppercase;color:rgba(245,237,230,0.45);">Cushion</p></div>
+      <div class="dc-slide" data-i="2" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease;"><img src="https://raw.githubusercontent.com/voyagedanslecristal/adamas/main/diamonds/emerald.png" style="max-height:60%;max-width:65%;object-fit:contain;filter:drop-shadow(0 0 20px rgba(212,80,10,0.2));"/><p style="margin-top:1.2rem;font-family:'Albert Sans',sans-serif;font-size:0.55rem;letter-spacing:0.42em;text-transform:uppercase;color:rgba(245,237,230,0.45);">Emerald</p></div>
+      <div class="dc-slide" data-i="3" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease;"><img src="https://raw.githubusercontent.com/voyagedanslecristal/adamas/main/diamonds/pear.png" style="max-height:60%;max-width:65%;object-fit:contain;filter:drop-shadow(0 0 20px rgba(212,80,10,0.2));"/><p style="margin-top:1.2rem;font-family:'Albert Sans',sans-serif;font-size:0.55rem;letter-spacing:0.42em;text-transform:uppercase;color:rgba(245,237,230,0.45);">Pear</p></div>
+      <div class="dc-slide" data-i="4" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity 1.2s ease;"><img src="https://raw.githubusercontent.com/voyagedanslecristal/adamas/main/diamonds/sqemerald.png" style="max-height:60%;max-width:65%;object-fit:contain;filter:drop-shadow(0 0 20px rgba(212,80,10,0.2));"/><p style="margin-top:1.2rem;font-family:'Albert Sans',sans-serif;font-size:0.55rem;letter-spacing:0.42em;text-transform:uppercase;color:rgba(245,237,230,0.45);">Square Emerald</p></div>
+      <div style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;gap:6px;"><span class="dc-dot" data-d="0" style="width:4px;height:4px;border-radius:50%;background:rgba(212,80,10,0.9);transition:background 0.4s;"></span><span class="dc-dot" data-d="1" style="width:4px;height:4px;border-radius:50%;background:rgba(245,237,230,0.2);transition:background 0.4s;"></span><span class="dc-dot" data-d="2" style="width:4px;height:4px;border-radius:50%;background:rgba(245,237,230,0.2);transition:background 0.4s;"></span><span class="dc-dot" data-d="3" style="width:4px;height:4px;border-radius:50%;background:rgba(245,237,230,0.2);transition:background 0.4s;"></span><span class="dc-dot" data-d="4" style="width:4px;height:4px;border-radius:50%;background:rgba(245,237,230,0.2);transition:background 0.4s;"></span></div>
+    </div>
+  </div>
   </div>
 </section>
 
@@ -2353,5 +2367,22 @@
   })();
 </script>
 
+
+<script>
+(function() {
+  var cur = 0;
+  var slides = document.querySelectorAll('.dc-slide');
+  var dots = document.querySelectorAll('.dc-dot');
+  if (!slides.length) return;
+  setInterval(function() {
+    slides[cur].style.opacity = '0';
+    dots[cur].style.background = 'rgba(245,237,230,0.2)';
+    cur = (cur + 1) % slides.length;
+    slides[cur].style.opacity = '1';
+    dots[cur].style.background = 'rgba(212,80,10,0.9)';
+  }, 3500);
+})();
+</script>
+<script>(function(){var c=0,s=document.querySelectorAll('.dc-slide'),d=document.querySelectorAll('.dc-dot');if(!s.length)return;setInterval(function(){s[c].style.opacity='0';d[c].style.background='rgba(245,237,230,0.2)';c=(c+1)%s.length;s[c].style.opacity='1';d[c].style.background='rgba(212,80,10,0.9)';},3500);})();</script>
 </body>
 </html>
