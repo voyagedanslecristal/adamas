@@ -2452,6 +2452,7 @@
   .htl-card:hover .htl-img::before { display: none !important; animation: none !important; opacity: 0 !important; }
 
   /* Ciel progressif — nuit noire à gauche, aube dorée à droite */
+  .timeline-section { position: relative !important; }
   .timeline-section::after {
     content: "" !important;
     position: absolute !important;
@@ -2473,19 +2474,8 @@
   }
   .timeline-section > * { position: relative !important; z-index: 1 !important; }
 
-  /* Ciel nuit→aube via background de la section — aucun impact layout */
-  .timeline-section {
-    background: linear-gradient(to right,
-      rgba(2,3,8,0.0) 0%,
-      rgba(2,3,8,0.0) 3%,
-      rgba(15,6,3,0.4) 25%,
-      rgba(40,16,5,0.45) 50%,
-      rgba(90,38,8,0.38) 68%,
-      rgba(150,65,12,0.28) 82%,
-      rgba(200,90,18,0.18) 93%,
-      rgba(220,110,20,0.08) 100%
-    ) !important;
-  }
+  .timeline-section { position: relative !important; }
+  .timeline-section > *:not(#htl-sky-canvas) { position: relative !important; z-index: 1 !important; }
 
   /* Anneau orbital hover */
   @keyframes htl-orbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
@@ -2558,5 +2548,78 @@
 </script>
 
 
+<script id="htl-sky-script">
+(function(){
+  function rng(s){var x=Math.sin(s)*10000;return x-Math.floor(x);}
+  var canvas,section;
+  function init(){
+    section=document.querySelector('.timeline-section');
+    if(!section) return;
+    document.getElementById('htl-sky-canvas')?.remove();
+    canvas=document.createElement('canvas');
+    canvas.id='htl-sky-canvas';
+    Object.assign(canvas.style,{position:'fixed',top:'0',left:'0',width:'100vw',height:'100vh',pointerEvents:'none',zIndex:'0',opacity:'0',transition:'opacity 0.5s'});
+    document.body.appendChild(canvas);
+    update();
+    window.addEventListener('scroll',update,{passive:true});
+    window.addEventListener('resize',update);
+  }
+  function update(){
+    if(!section||!canvas) return;
+    var rect=section.getBoundingClientRect();
+    var visible=rect.bottom>0&&rect.top<window.innerHeight;
+    canvas.style.opacity=visible?'1':'0';
+    if(visible) draw(rect);
+  }
+  function draw(rect){
+    var W=window.innerWidth,H=window.innerHeight;
+    canvas.width=W; canvas.height=H;
+    var ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+    var top=Math.max(rect.top,0),bot=Math.min(rect.bottom,H);
+    var sW=rect.width,sH=rect.bottom-rect.top;
+    var bg=ctx.createLinearGradient(rect.left,0,rect.right,0);
+    bg.addColorStop(0,'rgba(2,3,10,0.88)'); bg.addColorStop(0.42,'rgba(6,4,10,0.65)');
+    bg.addColorStop(0.68,'rgba(22,9,4,0.5)'); bg.addColorStop(0.83,'rgba(55,22,5,0.42)');
+    bg.addColorStop(0.93,'rgba(110,45,8,0.32)'); bg.addColorStop(1.0,'rgba(175,75,12,0.22)');
+    ctx.fillStyle=bg; ctx.fillRect(rect.left,top,sW,bot-top);
+    for(var i=0;i<200;i++){
+      var px=rect.left+rng(i*3.1)*sW,py=rect.top+rng(i*7.3)*sH*0.65;
+      if(py<top||py>bot) continue;
+      var r=rng(i*1.7)*1.2+0.25,fade=Math.max(0,1-((px-rect.left)/sW)*2.1);
+      if(fade<0.03) continue;
+      var br=0.55+rng(i*5.9)*0.45;
+      ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2);
+      ctx.fillStyle='rgba('+Math.round(215*br)+','+Math.round(215*br)+','+Math.round(255*br)+','+fade*0.82+')';
+      ctx.fill();
+      if(r>1.0&&fade>0.38){
+        var g=ctx.createRadialGradient(px,py,0,px,py,r*4.5);
+        g.addColorStop(0,'rgba(195,210,255,'+(fade*0.2)+')'); g.addColorStop(1,'transparent');
+        ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,r*4.5,0,Math.PI*2); ctx.fill();
+      }
+    }
+    var sx=rect.right-18,sy=rect.top+sH*0.38;
+    if(sy>=top-50&&sy<=bot+50){
+      var halo=ctx.createRadialGradient(sx,sy,0,sx,sy,sH*0.52);
+      halo.addColorStop(0,'rgba(255,155,35,0.22)'); halo.addColorStop(0.18,'rgba(215,95,18,0.14)');
+      halo.addColorStop(0.38,'rgba(175,65,8,0.07)'); halo.addColorStop(0.65,'rgba(135,48,4,0.03)');
+      halo.addColorStop(1,'transparent'); ctx.fillStyle=halo; ctx.fillRect(rect.left,top,sW,bot-top);
+      var sun=ctx.createRadialGradient(sx,sy,0,sx,sy,30);
+      sun.addColorStop(0,'rgba(255,232,145,0.62)'); sun.addColorStop(0.28,'rgba(255,178,58,0.42)');
+      sun.addColorStop(0.62,'rgba(218,105,18,0.18)'); sun.addColorStop(1,'transparent');
+      ctx.fillStyle=sun; ctx.beginPath(); ctx.arc(sx,sy,30,0,Math.PI*2); ctx.fill();
+      for(var a=0;a<Math.PI*2;a+=Math.PI/8){
+        var len=15+rng(a*97)*11;
+        var gr=ctx.createLinearGradient(sx,sy,sx+Math.cos(a)*len,sy+Math.sin(a)*len);
+        gr.addColorStop(0,'rgba(255,195,75,0.1)'); gr.addColorStop(1,'transparent');
+        ctx.strokeStyle=gr; ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(sx+Math.cos(a)*len,sy+Math.sin(a)*len); ctx.stroke();
+      }
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>
 </body>
 </html>
