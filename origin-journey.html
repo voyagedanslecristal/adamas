@@ -2451,6 +2451,29 @@
   /* Désactiver ::before original — clippé par overflow:auto */
   .htl-card:hover .htl-img::before { display: none !important; animation: none !important; opacity: 0 !important; }
 
+  /* Ciel progressif — nuit noire à gauche, aube dorée à droite */
+  .timeline-section { position: relative !important; }
+  .timeline-section::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+    background: linear-gradient(to right,
+      transparent                        0%,
+      rgba(10,6,2,0.0)                  5%,
+      rgba(20,8,4,0.25)                20%,
+      rgba(40,18,6,0.35)               38%,
+      rgba(80,35,8,0.28)               55%,
+      rgba(130,58,12,0.22)             68%,
+      rgba(180,90,20,0.18)             78%,
+      rgba(212,120,30,0.14)            88%,
+      rgba(230,160,50,0.10)            95%,
+      transparent                       100%
+    ) !important;
+  }
+  .timeline-section > * { position: relative !important; z-index: 1 !important; }
+
   /* Anneau orbital hover */
   @keyframes htl-orbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   .htl-ring {
