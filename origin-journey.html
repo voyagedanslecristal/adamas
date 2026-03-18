@@ -2452,6 +2452,10 @@
   /* Désactiver ::before original — clippé par overflow:auto */
   .htl-card:hover .htl-img::before { display: none !important; animation: none !important; opacity: 0 !important; }
 
+  /* Padding pour que le scale(1.28) ne soit pas clippé en haut */
+  .htl-track { padding-top: 28px !important; padding-bottom: 28px !important; margin-top: -28px !important; margin-bottom: -28px !important; }
+  .htl-track::before { top: calc(249px + 28px) !important; }
+
   /* Anneau orbital hover */
   @keyframes htl-orbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   .htl-ring {
