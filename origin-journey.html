@@ -734,8 +734,7 @@
   .htl-card { cursor: default; }
 
   .htl-card:hover .htl-img {
-    transform: scale(1.28)
-;
+    transform: scale(1);
     border-color: var(--gold) !important;
     box-shadow: 0 0 50px rgba(212,80,10,0.45), 0 0 0 1px rgba(212,80,10,0.25) !important;
     z-index: 20;
@@ -2451,10 +2450,6 @@
   }
   /* Désactiver ::before original — clippé par overflow:auto */
   .htl-card:hover .htl-img::before { display: none !important; animation: none !important; opacity: 0 !important; }
-
-  /* Padding pour que le scale(1.28) ne soit pas clippé en haut */
-  .htl-track { padding-top: 28px !important; padding-bottom: 28px !important; margin-top: -28px !important; margin-bottom: -28px !important; }
-  .htl-track::before { top: calc(249px + 28px) !important; }
 
   /* Anneau orbital hover */
   @keyframes htl-orbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
