@@ -2424,109 +2424,98 @@
   /* Ligne calée sur les dots */
   .htl-track { position: relative !important; }
   .htl-track::before {
-    content: "" !important; position: absolute !important;
-    top: 249px !important; left: 105px !important; right: 105px !important;
-    height: 1px !important; background: rgba(212,80,10,0.55) !important;
-    z-index: 0 !important; pointer-events: none !important;
+    content: "" !important;
+    position: absolute !important;
+    top: 249px !important;
+    left: 105px !important;
+    right: 105px !important;
+    height: 1px !important;
+    background: rgba(212,80,10,0.55) !important;
+    z-index: 0 !important;
+    pointer-events: none !important;
   }
   /* Dots */
-  .htl-node { width:11px !important; height:11px !important; background:#d4500a !important; border-color:#d4500a !important; box-shadow:0 0 8px rgba(212,80,10,0.6) !important; }
-  .htl-card:last-child .htl-node { width:14px !important; height:14px !important; }
-  /* Overflow visible — le drop-shadow est géré par l'overlay fixed */
-  .htl-img { overflow: visible !important; transition: transform 0.85s cubic-bezier(0.22,1,0.36,1) !important; }
+  .htl-node {
+    width: 11px !important; height: 11px !important;
+    background: #d4500a !important; border-color: #d4500a !important;
+    box-shadow: 0 0 8px rgba(212,80,10,0.6) !important;
+  }
+  .htl-card:last-child .htl-node {
+    width: 14px !important; height: 14px !important;
+  }
+  /* Glow via drop-shadow — non clippé par overflow */
+  .htl-img { overflow: visible !important; transition: transform 0.85s cubic-bezier(0.22,1,0.36,1), filter 0.4s ease !important; }
   .htl-img-photo { overflow: visible !important; }
-  /* Pas de filter sur .htl-img — évite le clipping par overflow:auto */
-  .htl-card:hover .htl-img { filter: none !important; }
+  .htl-card:hover .htl-img {
+    filter: drop-shadow(0 0 12px rgba(212,80,10,0.55)) drop-shadow(0 0 28px rgba(212,80,10,0.28)) !important;
+  }
   /* Anneau orbital hover */
   @keyframes htl-orbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   .htl-ring {
-    position:absolute; inset:-8px; border-radius:50%;
-    border:1.5px solid transparent;
-    border-top-color:rgba(212,80,10,0); border-right-color:rgba(212,80,10,0);
-    opacity:0; transform:scale(0.88);
-    transition:opacity 0.3s ease, transform 0.3s ease;
-    pointer-events:none; z-index:15;
+    position: absolute; inset: -8px; border-radius: 50%;
+    border: 1.5px solid transparent;
+    border-top-color: rgba(212,80,10,0); border-right-color: rgba(212,80,10,0);
+    opacity: 0; transform: scale(0.88);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none; z-index: 15;
   }
   .htl-card:hover .htl-ring {
-    opacity:1; transform:scale(1);
-    border-top-color:rgba(212,80,10,1); border-right-color:rgba(212,80,10,0.38);
-    animation:htl-orbit 1.8s linear infinite;
+    opacity: 1; transform: scale(1);
+    border-top-color: rgba(212,80,10,1); border-right-color: rgba(212,80,10,0.38);
+    animation: htl-orbit 1.8s linear infinite;
   }
   /* Comètes */
   @keyframes htl-comet {
-    0%   { transform:rotate(45deg) translateY(0);       opacity:0; }
-    7%   { opacity:1; }
-    88%  { opacity:1; }
-    100% { transform:rotate(45deg) translateY(180vmax); opacity:0; }
+    0%   { transform: rotate(45deg) translateY(0);        opacity: 0; }
+    7%   { opacity: 1; }
+    88%  { opacity: 1; }
+    100% { transform: rotate(45deg) translateY(180vmax);  opacity: 0; }
   }
   .htl-comet {
-    position:fixed; pointer-events:none; z-index:9999;
-    border-radius:50% 50% 0 0; transform-origin:bottom center;
-    transform:rotate(45deg); opacity:0; filter:blur(0.35px);
-    background:linear-gradient(to bottom,transparent 0%,rgba(212,80,10,0.05) 22%,rgba(212,80,10,0.38) 58%,rgba(245,195,138,0.9) 87%,#fffaf3 100%);
-    box-shadow:0 0 5px 1px rgba(212,80,10,0.2),0 0 2px rgba(255,228,192,0.5);
+    position: fixed; pointer-events: none; z-index: 9999;
+    border-radius: 50% 50% 0 0; transform-origin: bottom center;
+    transform: rotate(45deg); opacity: 0; filter: blur(0.35px);
+    background: linear-gradient(to bottom,
+      transparent 0%, rgba(212,80,10,0.05) 22%,
+      rgba(212,80,10,0.38) 58%, rgba(245,195,138,0.9) 87%, #fffaf3 100%);
+    box-shadow: 0 0 5px 1px rgba(212,80,10,0.2), 0 0 2px rgba(255,228,192,0.5);
   }
-  /* Glow overlay fixed — diffus, jamais clippé */
-  #htl-glow {
-    position:fixed; border-radius:50%; pointer-events:none; z-index:9989;
-    opacity:0; transition:opacity 0.4s ease;
-    background:radial-gradient(circle,
-      rgba(212,80,10,0.0)  35%,
-      rgba(212,80,10,0.14) 52%,
-      rgba(212,80,10,0.22) 62%,
-      rgba(212,80,10,0.10) 74%,
-      rgba(212,80,10,0.03) 86%,
-      transparent 100%);
-    filter:blur(8px);
-  }
-  #htl-glow.on { opacity:1; }
 </style>
 <script>
-(function(){
-  // Rings
-  document.querySelectorAll('.htl-img').forEach(function(img){
-    if(!img.querySelector('.htl-ring')){
-      var r=document.createElement('div'); r.className='htl-ring'; img.appendChild(r);
+(function() {
+  // Rings sur tous les cercles
+  document.querySelectorAll('.htl-img').forEach(function(img) {
+    if (!img.querySelector('.htl-ring')) {
+      var r = document.createElement('div');
+      r.className = 'htl-ring';
+      img.appendChild(r);
     }
   });
-  // Glow overlay fixed
-  var glow=document.createElement('div'); glow.id='htl-glow'; document.body.appendChild(glow);
   // Comètes
-  var cc=[
+  var cometCfg = [
     {top:'-140px',right:'2vw', w:'2.5px',h:'140px',dur:'2000ms',delay:'0ms'},
     {top:'-90px', right:'14vw',w:'1.5px',h:'88px', dur:'1850ms',delay:'170ms'},
     {top:'-160px',right:'28vw',w:'3px',  h:'160px',dur:'2200ms',delay:'330ms'},
     {top:'-70px', right:'44vw',w:'1.5px',h:'72px', dur:'1750ms',delay:'80ms'},
     {top:'-120px',right:'58vw',w:'2px',  h:'115px',dur:'2050ms',delay:'250ms'}
   ];
-  cc.forEach(function(c,i){
-    var el=document.createElement('div');
-    el.className='htl-comet'; el.id='htl-comet-'+i;
-    el.style.top=c.top; el.style.right=c.right; el.style.width=c.w; el.style.height=c.h;
+  cometCfg.forEach(function(c,i) {
+    var el = document.createElement('div');
+    el.className = 'htl-comet'; el.id = 'htl-comet-'+i;
+    el.style.top = c.top; el.style.right = c.right;
+    el.style.width = c.w; el.style.height = c.h;
     document.body.appendChild(el);
   });
-  function launchComets(){
-    cc.forEach(function(c,i){
-      var el=document.getElementById('htl-comet-'+i);
-      el.style.animation='none'; void el.offsetWidth;
-      el.style.animation='htl-comet '+c.dur+' '+c.delay+' cubic-bezier(0.18,0.5,0.38,0.97) forwards';
+  function launchComets() {
+    cometCfg.forEach(function(c,i) {
+      var el = document.getElementById('htl-comet-'+i);
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = 'htl-comet '+c.dur+' '+c.delay+' cubic-bezier(0.18,0.5,0.38,0.97) forwards';
     });
   }
-  // Hover sur chaque carte
-  document.querySelectorAll('.htl-card').forEach(function(card){
-    var img=card.querySelector('.htl-img');
-    card.addEventListener('mouseenter',function(){
-      var r=img.getBoundingClientRect();
-      var s=r.width*1.28*1.7;
-      var cx=r.left+r.width/2, cy=r.top+r.height/2;
-      glow.style.width=s+'px'; glow.style.height=s+'px';
-      glow.style.left=(cx-s/2)+'px'; glow.style.top=(cy-s/2)+'px';
-      glow.classList.add('on');
-    });
-    card.addEventListener('mouseleave',function(){ glow.classList.remove('on'); });
-  });
-  var fc=document.querySelector('.htl-card');
-  if(fc) fc.addEventListener('mouseenter',launchComets);
+  var firstCard = document.querySelector('.htl-card');
+  if (firstCard) firstCard.addEventListener('mouseenter', launchComets);
 })();
 </script>
 </body>
