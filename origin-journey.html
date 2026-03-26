@@ -561,16 +561,36 @@
   /* floating depth numbers */
   .intro-depth {
     position: absolute;
-    font-family: 'Albert Sans', sans-serif;
-    font-size: 0.58rem;
-    letter-spacing: 0.2em;
-    color: rgba(212,80,10,0.3);
-    writing-mode: vertical-rl;
     pointer-events: none;
-    z-index: 1;
+    z-index: 3;
+    writing-mode: vertical-rl;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
   }
-  .intro-depth-left  { left: 5vw; top: 50%; transform: translateY(-50%); }
-  .intro-depth-right { right: 5vw; top: 50%; transform: translateY(-50%) rotate(180deg); }
+  .depth-vline {
+    display: block;
+    width: 1px;
+    flex-shrink: 0;
+  }
+  .depth-arrow {
+    writing-mode: horizontal-tb;
+    font-size: 7px;
+    line-height: 1;
+    color: rgba(212,80,10,0.6);
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+  .depth-label {
+    font-family: 'Albert Sans', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: rgba(212,80,10,0.88);
+    flex-shrink: 0;
+  }
+  .intro-depth-left  { left: 2vw; top: 50%; transform: translateY(-50%); }
+  .intro-depth-right { right: 2vw; top: 50%; transform: translateY(-50%) rotate(180deg); }
 
   .intro-visual { display: none; }
 
@@ -1641,17 +1661,27 @@
   </div>
 
   <!-- side depth annotations -->
-  <div class="intro-depth intro-depth-left">150 KM BENEATH THE SURFACE</div>
-  <div class="intro-depth intro-depth-right">1300°C · 45 KBAR</div>
+  <div class="intro-depth intro-depth-left">
+  <span class="depth-vline" style="height:90px;background:linear-gradient(to bottom,transparent,rgba(212,80,10,0.7))"></span>
+  <span class="depth-label">150 KM BENEATH THE SURFACE</span>
+  <span class="depth-vline" style="height:90px;background:linear-gradient(to bottom,rgba(212,80,10,0.7),transparent)"></span>
+  <span class="depth-arrow">▼</span>
+</div>
+  <div class="intro-depth intro-depth-right">
+  <span class="depth-arrow">▼</span>
+  <span class="depth-vline" style="height:90px;background:linear-gradient(to bottom,transparent,rgba(212,80,10,0.7))"></span>
+  <span class="depth-label">1300°C · 45 KBAR</span>
+  <span class="depth-vline" style="height:90px;background:linear-gradient(to bottom,rgba(212,80,10,0.7),transparent)"></span>
+</div>
 
   <div class="intro-text">
     <p class="section-label reveal">GEOLOGICAL ORIGIN</p>
-    <p class="intro-lead reveal" style="font-family:'Nanum Myeongjo',Georgia,serif;font-style:italic;font-size:clamp(1.3rem,2vw,1.75rem);color:rgba(245,237,230,0.68);line-height:1.7">Natural diamonds began to crystallize as far as</p>
+    <p class="intro-lead reveal" style="font-family:'Nanum Myeongjo',Georgia,serif;font-style:italic;font-size:clamp(1.1rem,1.8vw,1.45rem);color:rgba(255,255,255,0.92);line-height:1.9;text-shadow:0 0 30px rgba(255,255,255,0.25),0 0 60px rgba(200,215,255,0.12)">Natural diamonds began to crystallize as far as</p>
     <div class="intro-billion reveal">
       1 TO 3
       <span class="unit">BILLION YEARS AGO</span>
     </div>
-    <p class="intro-sublead reveal" style="font-family:'Nanum Myeongjo',Georgia,serif;font-style:italic;font-size:clamp(1.3rem,2vw,1.75rem);color:rgba(245,237,230,0.68);line-height:1.7">under intense heat and pressure.</p>
+    <p class="intro-sublead reveal" style="font-family:'Nanum Myeongjo',Georgia,serif;font-style:italic;font-size:clamp(1.1rem,1.8vw,1.45rem);color:rgba(255,255,255,0.92);line-height:1.9;text-shadow:0 0 30px rgba(255,255,255,0.25),0 0 60px rgba(200,215,255,0.12)">under intense heat and pressure.</p>
     
     <div class="intro-rule reveal"><div class="intro-rule-diamond"></div></div>
     <p class="intro-body reveal">150 kilometres beneath the Earth’s surface, in a primordial silence older than life itself. A journey billions of years in the making, your diamond is singular in every detail.</p>
