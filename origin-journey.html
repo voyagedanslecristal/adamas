@@ -1580,7 +1580,25 @@
       animation: fadeUp 1.4s 0.5s ease forwards;
     }
   
-  </style>
+  
+  /* Glass morphism on intro-body */
+  .intro-body {
+    background: linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 100%) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-bottom-color: rgba(255,255,255,0.03) !important;
+    border-right-color: rgba(255,255,255,0.03) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      0 4px 24px rgba(0,0,0,0.2),
+      0 0 0 0.5px rgba(212,80,10,0.10) !important;
+    border-radius: 4px !important;
+    padding: 2rem 3rem !important;
+    margin: 1.5rem auto !important;
+    max-width: 58ch !important;
+  }
+</style>
 </head>
 <body>
 <div id="comet-overlay"><div class="comet"></div><div class="comet-trail"></div></div>
