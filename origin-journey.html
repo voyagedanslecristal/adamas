@@ -188,7 +188,6 @@
   }
   .side-dot.active {
     background: var(--gold);
-    box-shadow: 0 0 8px var(--gold);
   }
   .side-dot::after {
     content: attr(data-label);
@@ -507,6 +506,7 @@
     display: inline !important;
     border-radius: 2px !important;
     padding: 0 4px !important;
+    box-shadow: none !important;
   }
   .intro-billion::after { display: none !important; }
   .intro-billion .unit {
@@ -743,11 +743,9 @@
   }
   .htl-card.visible .htl-img {
     border-color: rgba(212,80,10,0.55);
-    box-shadow: 0 0 30px rgba(212,80,10,0.2), inset 0 0 0 1px rgba(212,80,10,0.08);
   }
   .htl-card:last-child.visible .htl-img {
     border-color: var(--gold);
-    box-shadow: 0 0 40px rgba(212,80,10,0.38);
   }
   .htl-img svg { width: 72px; height: 72px; }
   /* Photo variant */
@@ -770,7 +768,6 @@
   .htl-card:hover .htl-img {
     transform: scale(1);
     border-color: var(--gold) !important;
-    box-shadow: 0 0 50px rgba(212,80,10,0.45), 0 0 0 1px rgba(212,80,10,0.25) !important;
     z-index: 20;
   }
   /* dim vignette on hover so photo breathes */
@@ -805,7 +802,7 @@
   /* label brightens */
   .htl-card:hover .htl-label  { color: rgba(245,237,230,1); }
   .htl-card:hover .htl-date   { filter: brightness(1.25); }
-  .htl-card:hover .htl-node   { transform: scale(1.4); box-shadow: 0 0 16px rgba(212,80,10,0.9) !important; }
+  .htl-card:hover .htl-node   { transform: scale(1.4); }
 
   /* subtle lift of the whole card */
   .htl-card {
@@ -835,7 +832,6 @@
   .htl-card.visible .htl-node {
     background: var(--gold);
     border-color: var(--gold);
-    box-shadow: 0 0 10px rgba(212,80,10,0.6);
   }
   .htl-card:last-child .htl-node {
     width: 14px; height: 14px;
@@ -1287,7 +1283,6 @@
     width: 6px; height: 6px;
     border-radius: 50%;
     background: radial-gradient(circle, #fff 0%, rgba(255,220,160,0.9) 40%, transparent 100%);
-    box-shadow: 0 0 8px 3px rgba(255,220,160,0.6), 0 0 20px 6px rgba(212,80,10,0.3);
   }
   /* secondary faint trail */
   .comet-trail {
@@ -2139,7 +2134,6 @@
       --drift:${drift}px;
       animation-duration:${duration}s;
       animation-delay:${delay}s;
-      box-shadow: 0 0 ${size * 2.5}px rgba(255,100,20,0.9);
     `;
     emberContainer.appendChild(e);
     setTimeout(() => e.remove(), (duration + delay + 0.5) * 1000);
@@ -2453,7 +2447,6 @@
   .htl-node {
     width: 11px !important; height: 11px !important;
     background: #d4500a !important; border-color: #d4500a !important;
-    box-shadow: 0 0 8px rgba(212,80,10,0.6) !important;
   }
   .htl-card:last-child .htl-node {
     width: 14px !important; height: 14px !important;
@@ -2522,7 +2515,6 @@
     background: linear-gradient(to bottom,
       transparent 0%, rgba(212,80,10,0.05) 22%,
       rgba(212,80,10,0.38) 58%, rgba(245,195,138,0.9) 87%, #fffaf3 100%);
-    box-shadow: 0 0 5px 1px rgba(212,80,10,0.2), 0 0 2px rgba(255,228,192,0.5);
   }
 </style>
 <script>
