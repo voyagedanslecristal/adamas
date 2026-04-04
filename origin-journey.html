@@ -2754,5 +2754,130 @@
 })();
 </script>
 
+
+<script>
+(function(){
+  // ── BEE HOVER ANIMATION ──
+  function makeBeeSVG(scale){
+    const s = scale;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${38*s}" height="${28*s}" viewBox="0 0 38 28" style="overflow:visible">
+      <g>
+        <!-- wings -->
+        <ellipse cx="14" cy="7" rx="10" ry="5" fill="rgba(245,237,200,0.55)" stroke="rgba(212,80,10,0.3)" stroke-width="0.5"/>
+        <ellipse cx="14" cy="21" rx="9" ry="4" fill="rgba(245,237,200,0.45)" stroke="rgba(212,80,10,0.25)" stroke-width="0.5"/>
+        <!-- body -->
+        <ellipse cx="22" cy="14" rx="12" ry="7" fill="#d4500a" opacity="0.85"/>
+        <!-- stripes -->
+        <rect x="16" y="8" width="3.5" height="12" rx="1.5" fill="rgba(15,10,0,0.55)"/>
+        <rect x="21" y="8" width="3.5" height="12" rx="1.5" fill="rgba(15,10,0,0.55)"/>
+        <rect x="26" y="9" width="2.5" height="10" rx="1.2" fill="rgba(15,10,0,0.45)"/>
+        <!-- head -->
+        <circle cx="34" cy="14" r="4.5" fill="#b84008" opacity="0.9"/>
+        <!-- eye -->
+        <circle cx="35.5" cy="12.5" r="1.2" fill="rgba(0,0,0,0.5)"/>
+        <!-- antennae -->
+        <line x1="34" y1="10" x2="31" y2="4" stroke="rgba(15,10,0,0.6)" stroke-width="0.8"/>
+        <circle cx="31" cy="3.5" r="1" fill="rgba(15,10,0,0.5)"/>
+        <line x1="36" y1="10" x2="37" y2="4" stroke="rgba(15,10,0,0.6)" stroke-width="0.8"/>
+        <circle cx="37" cy="3.5" r="1" fill="rgba(15,10,0,0.5)"/>
+      </g>
+    </svg>`;
+  }
+
+  let beeLayer = null;
+  let beeTimeout = null;
+  let beeAnims = [];
+
+  function createLayer(){
+    if(beeLayer) return beeLayer;
+    beeLayer = document.createElement('div');
+    beeLayer.id = 'bee-overlay';
+    beeLayer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:7000;overflow:hidden;';
+    document.body.appendChild(beeLayer);
+    return beeLayer;
+  }
+
+  function spawnBees(){
+    const layer = createLayer();
+    const count = 7 + Math.floor(Math.random()*5);
+
+    for(let i=0;i<count;i++){
+      setTimeout(()=>{
+        const el = document.createElement('div');
+        const scale = 0.55 + Math.random()*0.85;
+        const startY = 8 + Math.random()*82;
+        const dur = 4000 + Math.random()*3500;
+        const flip = Math.random()>0.5;
+        // Bees bob up and down — add a CSS animation for wobble
+        const wobbleAmp = 20 + Math.random()*30;
+        const wobbleSpeed = 0.8 + Math.random()*0.8;
+
+        el.style.cssText = `position:absolute;top:${startY}%;pointer-events:none;opacity:0;transition:opacity 0.5s;`;
+        if(flip){ el.style.right='-60px'; el.style.transform='scaleX(-1)'; }
+        else { el.style.left='-60px'; }
+        el.innerHTML = makeBeeSVG(scale);
+
+        // Add wobble via JS animation
+        let start = null;
+        let frame;
+        function wobble(ts){
+          if(!start) start=ts;
+          const elapsed = ts-start;
+          const progress = elapsed/dur;
+          if(progress>=1){ el.style.opacity='0'; clearTimeout(t); return; }
+          const dy = Math.sin(elapsed/1000*wobbleSpeed*Math.PI*2)*wobbleAmp;
+          el.style.transform = (flip?'scaleX(-1) ':'')+`translateY(${dy}px)`;
+          frame = requestAnimationFrame(wobble);
+        }
+        frame = requestAnimationFrame(wobble);
+
+        layer.appendChild(el);
+        requestAnimationFrame(()=>{
+          el.style.opacity='1';
+          el.style.transition=`left ${dur}ms linear, right ${dur}ms linear, opacity 0.5s`;
+          requestAnimationFrame(()=>{
+            if(flip) el.style.right='110%';
+            else el.style.left='110%';
+          });
+        });
+
+        const t = setTimeout(()=>{
+          cancelAnimationFrame(frame);
+          if(el.parentNode) el.parentNode.removeChild(el);
+        }, dur+700);
+        beeAnims.push(t);
+      }, i*320);
+    }
+  }
+
+  function clearBees(){
+    if(beeTimeout){clearTimeout(beeTimeout);beeTimeout=null;}
+    beeAnims.forEach(t=>clearTimeout(t));
+    beeAnims=[];
+    if(beeLayer){
+      Array.from(beeLayer.children).forEach(el=>{
+        el.style.opacity='0';
+        setTimeout(()=>{if(el.parentNode)el.parentNode.removeChild(el);},500);
+      });
+    }
+  }
+
+  function attachBeeHover(){
+    const cards = document.querySelectorAll('.htl-card');
+    let beeCard=null;
+    cards.forEach(c=>{
+      const label=c.querySelector('[class*="label"]');
+      if(label&&label.textContent.trim().toLowerCase().includes('bee')) beeCard=c;
+    });
+    if(!beeCard){setTimeout(attachBeeHover,500);return;}
+    beeCard.addEventListener('mouseenter',()=>{beeTimeout=setTimeout(spawnBees,150);});
+    beeCard.addEventListener('mouseleave',clearBees);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',attachBeeHover);
+  else attachBeeHover();
+})();
+</script>
+
 </body>
 </html>
