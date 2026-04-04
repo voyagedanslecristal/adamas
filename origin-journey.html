@@ -2643,5 +2643,116 @@
   else init();
 })();
 </script>
+
+<script>
+(function(){
+  // ── FISH HOVER ANIMATION ──
+  // SVG fish shape (simple, elegant)
+  function makeFishSVG(color, scale){
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${60*scale}" height="${28*scale}" viewBox="0 0 60 28" style="overflow:visible">
+      <g fill="${color}" opacity="0.82">
+        <!-- body -->
+        <ellipse cx="28" cy="14" rx="18" ry="9"/>
+        <!-- tail -->
+        <polygon points="10,14 0,4 0,24"/>
+        <!-- fin -->
+        <ellipse cx="30" cy="8" rx="7" ry="3" transform="rotate(-20,30,8)" opacity="0.6"/>
+        <!-- eye -->
+        <circle cx="40" cy="12" r="2" fill="rgba(0,0,0,0.4)"/>
+        <circle cx="40.7" cy="11.3" r="0.7" fill="rgba(255,255,255,0.6)"/>
+      </g>
+    </svg>`;
+  }
+
+  let fishLayer = null;
+  let fishTimeout = null;
+  let activeAnimations = [];
+
+  function createFishLayer(){
+    if(fishLayer) return fishLayer;
+    fishLayer = document.createElement('div');
+    fishLayer.id = 'fish-overlay';
+    fishLayer.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:7000;overflow:hidden;';
+    document.body.appendChild(fishLayer);
+    return fishLayer;
+  }
+
+  function spawnFish(){
+    const layer = createFishLayer();
+    const colors = ['rgba(212,80,10,0.7)','rgba(245,160,96,0.65)','rgba(232,115,46,0.7)','rgba(180,60,8,0.6)'];
+    const count = 8 + Math.floor(Math.random()*6);
+
+    for(let i=0; i<count; i++){
+      setTimeout(()=>{
+        const el = document.createElement('div');
+        const scale = 0.5 + Math.random()*1.0;
+        const y = 5 + Math.random()*85; // % of screen height
+        const duration = 3500 + Math.random()*3000;
+        const color = colors[Math.floor(Math.random()*colors.length)];
+        const flip = Math.random() > 0.5; // right-to-left sometimes
+
+        el.style.cssText = `position:absolute;top:${y}%;pointer-events:none;opacity:0;transition:opacity 0.4s;`;
+        if(flip){
+          el.style.right = '-80px';
+          el.style.transform = 'scaleX(-1)';
+        } else {
+          el.style.left = '-80px';
+        }
+        el.innerHTML = makeFishSVG(color, scale);
+        layer.appendChild(el);
+
+        // Fade in
+        requestAnimationFrame(()=>{
+          el.style.opacity = '1';
+          el.style.transition = `left ${duration}ms linear, right ${duration}ms linear, opacity 0.4s`;
+          requestAnimationFrame(()=>{
+            if(flip) el.style.right = '110%';
+            else el.style.left = '110%';
+          });
+        });
+
+        // Remove after animation
+        const cleanup = setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, duration + 600);
+        activeAnimations.push(cleanup);
+      }, i * 280);
+    }
+  }
+
+  function clearFish(){
+    if(fishTimeout){ clearTimeout(fishTimeout); fishTimeout=null; }
+    activeAnimations.forEach(t=>clearTimeout(t));
+    activeAnimations = [];
+    if(fishLayer){
+      // Fade out all fish
+      Array.from(fishLayer.children).forEach(el=>{
+        el.style.opacity='0';
+        setTimeout(()=>{ if(el.parentNode) el.parentNode.removeChild(el); }, 500);
+      });
+    }
+  }
+
+  // Attach to fish card
+  function attachFishHover(){
+    const cards = document.querySelectorAll('.htl-card');
+    let fishCard = null;
+    cards.forEach(c=>{
+      const label = c.querySelector('[class*="label"]');
+      if(label && label.textContent.trim().toLowerCase().includes('fish')) fishCard=c;
+    });
+    if(!fishCard){ setTimeout(attachFishHover, 500); return; }
+
+    fishCard.addEventListener('mouseenter', ()=>{
+      fishTimeout = setTimeout(spawnFish, 150);
+    });
+    fishCard.addEventListener('mouseleave', ()=>{
+      clearFish();
+    });
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', attachFishHover);
+  else attachFishHover();
+})();
+</script>
+
 </body>
 </html>
