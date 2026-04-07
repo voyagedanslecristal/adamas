@@ -2335,40 +2335,35 @@
     // Animate subtly
     let offset = 0;
     function animTopo() {
-  const canvas = document.getElementById('topo-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const W = canvas.width, H = canvas.height;
-  let t = 0;
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    const N = 18;
-    for(let l=0;l<N;l++){
-      const baseY = H*(0.06 + (l/(N-1))*0.88);
-      const isIndex = (l%4===0);
-      const phase = l*1.618;
-      ctx.strokeStyle = isIndex ? 'rgba(212,80,10,0.55)' : 'rgba(212,80,10,0.22)';
-      ctx.lineWidth   = isIndex ? 0.9 : 0.42;
-      ctx.beginPath();
-      for(let px=0;px<=W;px+=2){
-        const x=px/W;
-        const dy =
-          Math.sin(x*4.1  + phase + t*0.7)  * 28
-        + Math.sin(x*9.3  + phase + t*0.43) * 14
-        + Math.sin(x*2.7  + phase + t*1.1)  * 38
-        + Math.sin(x*16.5 + phase + t*0.28) *  7
-        + Math.sin(x*1.4  + phase + t*0.19) * 52;
-        px===0?ctx.moveTo(px,baseY+dy):ctx.lineTo(px,baseY+dy);
+  let _t=0;
+      const W = intro.offsetWidth, H = intro.offsetHeight;
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = 'rgba(212,80,10,1)';
+      ctx.lineWidth = 0.8;
+      const lines = 18;
+      for (let i = 0; i < lines; i++) {
+        const baseY = (H / lines) * i + H * 0.05;
+        ctx.beginPath();
+        let x = 0;
+        ctx.moveTo(x, baseY + Math.sin(_t*0.4+offset * 0.3 + i) * 2);
+        while (x < W) {
+          const freq1 = 0.003 + i * 0.0004;
+          const freq2 = 0.007 + i * 0.0002;
+          const amp1 = 18 + i * 2.5;
+          const amp2 = 8 + i * 1.2;
+          const phase = i * 0.8 + offset * 0.004;
+          const y = baseY + Math.sin(_t*0.25+x * freq1 + phase) * amp1 + Math.sin(_t*0.6+x * freq2 + phase * 1.3) * amp2;
+          ctx.lineTo(x, y);
+          x += 2;
+        }
+        ctx.stroke();
       }
-      ctx.stroke();
+      offset++;
+  _t+=0.003;
+      requestAnimationFrame(animTopo);
     }
-    t += 0.004;
-    requestAnimationFrame(draw);
-  }
-  draw();
-}
     animTopo();
   })();
 
