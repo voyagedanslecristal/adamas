@@ -2338,107 +2338,38 @@
   const canvas = document.getElementById('topo-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  canvas.width = W;
-  canvas.height = H;
-
-  // ── Smooth noise (value noise, 2D) ──
-  const SEED_TABLE = (function(){
-    const t = [];
-    for(let i=0;i<512;i++) t[i] = Math.sin(i*127.1+i*311.7)*43758.5453|0;
-    return t;
-  })();
-
-  function fade(t){ return t*t*t*(t*(t*6-15)+10); }
-  function lerp(a,b,t){ return a+t*(b-a); }
-
-  function grad(h,x,y){
-    const g = [[1,1],[-1,1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[0,-1]];
-    const idx = ((h%8)+8)%8;
-    return g[idx][0]*x + g[idx][1]*y;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const W = canvas.width, H = canvas.height;
+  function lerp(a,b,t){return a+t*(b-a);}
+  function hash(n){ return ((Math.sin(n*127.1)*43758.5453)%1+1)%1; }
+  function vnoise(x){ const i=Math.floor(x),f=x-i,u=f*f*(3-2*f); return lerp(hash(i),hash(i+1),u); }
+  function fbm(x,t,oct){
+    let v=0,a=0.5,fr=1;
+    for(let i=0;i<oct;i++){v+=vnoise(x*fr+t*0.3*fr)*a; a*=0.5; fr*=2.17;}
+    return v;
   }
-
-  function noise2d(x,y){
-    const X=Math.floor(x)&255, Y=Math.floor(y)&255;
-    const xf=x-Math.floor(x), yf=y-Math.floor(y);
-    const u=fade(xf), v=fade(yf);
-    const aa=SEED_TABLE[SEED_TABLE[X]+Y];
-    const ab=SEED_TABLE[SEED_TABLE[X]+Y+1];
-    const ba=SEED_TABLE[SEED_TABLE[X+1]+Y];
-    const bb=SEED_TABLE[SEED_TABLE[X+1]+Y+1];
-    return lerp(
-      lerp(grad(aa,xf,yf), grad(ba,xf-1,yf), u),
-      lerp(grad(ab,xf,yf-1), grad(bb,xf-1,yf-1), u),
-      v
-    );
-  }
-
-  function fbm(x,y,octaves){
-    let v=0, amp=0.5, freq=1, max=0;
-    for(let i=0;i<octaves;i++){
-      v += noise2d(x*freq, y*freq)*amp;
-      max += amp; freq*=2.1; amp*=0.48;
-    }
-    return v/max;
-  }
-
-  let t = 0;
-  let raf;
-
+  let time=0;
   function draw(){
     ctx.clearRect(0,0,W,H);
-
-    const LEVELS = 18;
-    const scale = 0.0028;
-    const timeScale = 0.00012;
-
-    for(let l=0;l<LEVELS;l++){
-      const threshold = -0.72 + (l/(LEVELS-1))*1.44;
-      const isIndex = (l%5===0);
-      const alpha = isIndex ? 0.19 : 0.09;
-      const lw = isIndex ? 0.75 : 0.35;
-
-      ctx.strokeStyle = `rgba(212,80,10,${alpha})`;
-      ctx.lineWidth = lw;
+    for(let l=0;l<20;l++){
+      const baseY=H*(0.05+l/19*0.9);
+      const mid=1-Math.abs((l/19)-0.5)*2;
+      const amp=30+mid*mid*140;
+      ctx.strokeStyle=l%5===0?'rgba(212,80,10,0.22)':'rgba(212,80,10,0.10)';
+      ctx.lineWidth=l%5===0?0.85:0.38;
       ctx.beginPath();
-
-      // March horizontally: for each x find y where fbm(x,y,t) == threshold
-      const step = 5;
-      let drawing = false;
-
-      for(let px=0; px<=W; px+=step){
-        // Binary search for y
-        let lo=0, hi=H;
-        const fTop = fbm(px*scale + t, lo*scale, 4);
-        const fBot = fbm(px*scale + t, hi*scale, 4);
-
-        if((fTop-threshold)*(fBot-threshold) > 0){
-          if(drawing){ ctx.stroke(); ctx.beginPath(); drawing=false; }
-          continue;
-        }
-
-        for(let iter=0;iter<14;iter++){
-          const mid=(lo+hi)/2;
-          const fMid=fbm(px*scale + t, mid*scale, 4);
-          if((fTop-threshold)*(fMid-threshold)<=0) hi=mid;
-          else lo=mid;
-        }
-
-        const py = (lo+hi)/2;
-        if(!drawing){ ctx.moveTo(px,py); drawing=true; }
-        else ctx.lineTo(px,py);
+      for(let px=0;px<=W;px+=3){
+        const nx=px/W*5.5;
+        const dy=(fbm(nx,time,4)-0.5)*2*amp+(fbm(nx*0.45+7.3,time*0.6,3)-0.5)*amp*0.35;
+        px===0?ctx.moveTo(px,baseY+dy):ctx.lineTo(px,baseY+dy);
       }
-      if(drawing) ctx.stroke();
+      ctx.stroke();
     }
-
-    t += timeScale * 60; // advance time slowly
-    raf = requestAnimationFrame(draw);
+    time+=0.0008;
+    requestAnimationFrame(draw);
   }
-
-  if(window._topoRaf) cancelAnimationFrame(window._topoRaf);
   draw();
-  window._topoRaf = raf;
 }
     animTopo();
   })();
