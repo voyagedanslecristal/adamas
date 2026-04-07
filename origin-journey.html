@@ -2356,8 +2356,9 @@
       const baseY=H*(0.05+l/19*0.9);
       const mid=1-Math.abs((l/19)-0.5)*2;
       const amp=30+mid*mid*140;
-      ctx.strokeStyle=l%5===0?'rgba(212,80,10,0.22)':'rgba(212,80,10,0.10)';
-      ctx.lineWidth=l%5===0?0.85:0.38;
+      const isIndex=(l%5===0);
+      ctx.strokeStyle=isIndex?'rgba(212,80,10,0.65)':'rgba(212,80,10,0.32)';
+      ctx.lineWidth=isIndex?0.9:0.42;
       ctx.beginPath();
       for(let px=0;px<=W;px+=3){
         const nx=px/W*5.5;
