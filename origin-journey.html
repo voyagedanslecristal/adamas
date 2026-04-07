@@ -2341,33 +2341,30 @@
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   const W = canvas.width, H = canvas.height;
-  function lerp(a,b,t){return a+t*(b-a);}
-  function hash(n){ return ((Math.sin(n*127.1)*43758.5453)%1+1)%1; }
-  function vnoise(x){ const i=Math.floor(x),f=x-i,u=f*f*(3-2*f); return lerp(hash(i),hash(i+1),u); }
-  function fbm(x,t,oct){
-    let v=0,a=0.5,fr=1;
-    for(let i=0;i<oct;i++){v+=vnoise(x*fr+t*0.3*fr)*a; a*=0.5; fr*=2.17;}
-    return v;
-  }
-  let time=0;
+  let t = 0;
   function draw(){
     ctx.clearRect(0,0,W,H);
-    for(let l=0;l<20;l++){
-      const baseY=H*(0.05+l/19*0.9);
-      const mid=1-Math.abs((l/19)-0.5)*2;
-      const amp=30+mid*mid*140;
-      const isIndex=(l%5===0);
-      ctx.strokeStyle=isIndex?'rgba(212,80,10,0.65)':'rgba(212,80,10,0.32)';
-      ctx.lineWidth=isIndex?0.9:0.42;
+    const N = 18;
+    for(let l=0;l<N;l++){
+      const baseY = H*(0.06 + (l/(N-1))*0.88);
+      const isIndex = (l%4===0);
+      const phase = l*1.618;
+      ctx.strokeStyle = isIndex ? 'rgba(212,80,10,0.55)' : 'rgba(212,80,10,0.22)';
+      ctx.lineWidth   = isIndex ? 0.9 : 0.42;
       ctx.beginPath();
-      for(let px=0;px<=W;px+=3){
-        const nx=px/W*5.5;
-        const dy=(fbm(nx,time,4)-0.5)*2*amp+(fbm(nx*0.45+7.3,time*0.6,3)-0.5)*amp*0.35;
+      for(let px=0;px<=W;px+=2){
+        const x=px/W;
+        const dy =
+          Math.sin(x*4.1  + phase + t*0.7)  * 28
+        + Math.sin(x*9.3  + phase + t*0.43) * 14
+        + Math.sin(x*2.7  + phase + t*1.1)  * 38
+        + Math.sin(x*16.5 + phase + t*0.28) *  7
+        + Math.sin(x*1.4  + phase + t*0.19) * 52;
         px===0?ctx.moveTo(px,baseY+dy):ctx.lineTo(px,baseY+dy);
       }
       ctx.stroke();
     }
-    time+=0.0008;
+    t += 0.004;
     requestAnimationFrame(draw);
   }
   draw();
