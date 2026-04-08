@@ -964,7 +964,7 @@
     color: var(--gold-light);
     font-style: italic;
   }
-  .bridge-content p:not(.bridge-subtitle) {
+  .bridge-content p:not(.bridge-subtitle):not(.section-label) {
     font-size: 1.2rem;
     line-height: 2;
     color: rgba(245,237,230,0.78);
@@ -1396,7 +1396,7 @@
   }
 
   /* Body text */
-  .intro p, .bridge-content p:not(.bridge-subtitle), .artistry p {
+  .intro p, .bridge-content p:not(.bridge-subtitle):not(.section-label), .artistry p {
     font-size: clamp(0.9rem, 1.1vw, 1.05rem) !important;
     line-height: 1.9 !important;
     color: rgba(245,237,230,0.72) !important;
@@ -2914,6 +2914,18 @@ html body section.bridge div.bridge-content p.bridge-subtitle:first-of-type {
   max-width: 48ch !important;
   margin: 0 auto 1.8rem !important;
   display: block !important;
+}
+/* ══ NUCLEAR OVERRIDE — section-label = timeline-header h2 ══ */
+html body section.bridge div.bridge-content p.section-label {
+  font-family: 'Albert Sans', sans-serif !important;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.38em !important;
+  font-weight: 600 !important;
+  color: #E8652A !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 8px rgba(232,101,42,0.9), 0 0 20px rgba(232,101,42,0.5), 0 0 35px rgba(232,101,42,0.25) !important;
+  background: none !important;
+  border-bottom: none !important;
 }
 </style>
 </body>
